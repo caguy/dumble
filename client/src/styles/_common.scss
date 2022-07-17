@@ -1,0 +1,15 @@
+$card-width: 100;
+$card-height: 145;
+$card-border-radius: 5;
+
+@mixin card($flipped: false) {
+  border-radius: #{$card-border-radius}px;
+  border: solid 1px rgb(87, 87, 87);
+  width: #{$card-width}px;
+  height: #{$card-height}px;
+  background-color: rgb(250, 250, 250);
+
+  @if($flipped){
+    background-color: gold;
+  }
+}

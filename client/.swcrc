@@ -1,0 +1,17 @@
+{
+  "sourceMaps": "inline",
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "tsx": true,
+      "decorators": false,
+      "dynamicImport": false
+    },
+    "target": "es2021",
+    "transform": {
+      "react": {
+        "runtime": "automatic"
+      }
+    }
+  }
+}

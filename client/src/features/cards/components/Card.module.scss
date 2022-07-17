@@ -1,0 +1,40 @@
+@use "../../../../src/styles/common";
+@use "sass:math";
+
+.card {
+  @include common.card(false);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &-flipped {
+    @include common.card(true);
+  }
+}
+
+$kinds: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, jack, queen, king;
+$suits: club, diamond, heart, spade;
+
+$kind_index: 0;
+$suit_index: 0;
+
+@each $suit in $suits {
+  @each $kind in $kinds {
+    .card-#{$kind}-#{$suit} {
+      background-image: url("../../../assets/svg-cards.svg");
+      background-position: -#{$kind_index *
+        common.$card-width}px -#{$suit_index *
+        common.$card-height}px;
+      background-size: math.percentage(13);
+    }
+    $kind_index: $kind_index + 1;
+  }
+  $suit_index: $suit_index + 1;
+  $kind_index: 0;
+}
+
+.card-back {
+  background-image: url("../../../assets/svg-cards.svg");
+  background-position: -#{2 * common.$card-width}px -#{4 * common.$card-height}px;
+  background-size: math.percentage(13);
+}
