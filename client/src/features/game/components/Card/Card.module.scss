@@ -1,0 +1,52 @@
+@use "sass:math";
+@use "../../styles/_common.scss";
+
+@mixin card($flipped: false) {
+  border-radius: #{common.$card-border-radius}px;
+  border: solid 1px rgb(87, 87, 87);
+  width: #{common.$card-width}px;
+  height: #{common.$card-height}px;
+  background-color: rgb(250, 250, 250);
+
+  @if ($flipped) {
+    background-color: gold;
+  }
+}
+
+.card {
+  @include card(false);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &-flipped {
+    @include card(true);
+  }
+}
+
+$kinds: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, jack, queen, king;
+$suits: club, diamond, heart, spade;
+
+$kind_index: 0;
+$suit_index: 0;
+
+@each $suit in $suits {
+  @each $kind in $kinds {
+    .card-#{$kind}-#{$suit} {
+      background-image: url("../../assets/svg-cards.svg");
+      background-position: -#{$kind_index *
+        common.$card-width}px -#{$suit_index *
+        common.$card-height}px;
+      background-size: math.percentage(13);
+    }
+    $kind_index: $kind_index + 1;
+  }
+  $suit_index: $suit_index + 1;
+  $kind_index: 0;
+}
+
+.card-back {
+  background-image: url("../../assets/svg-cards.svg");
+  background-position: -#{2 * common.$card-width}px -#{4 * common.$card-height}px;
+  background-size: math.percentage(13);
+}

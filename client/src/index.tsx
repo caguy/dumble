@@ -1,9 +1,9 @@
 import { StrictMode } from "react";
 import * as ReactDOMClient from "react-dom/client";
 import { Provider } from "react-redux";
-import { store } from "./app/store";
-
-import App from "./App";
+import { store } from "@/app/store";
+import App from "@/app/components/App";
+import "./index.scss";
 
 const rootElement = document.getElementById("root");
 const root = ReactDOMClient.createRoot(rootElement as HTMLElement);

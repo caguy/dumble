@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import cardsReducer from "../features/cards/cardsSlice";
-import gameReducer from "../features/game/gameSlice";
+import gameReducer from "@/features/game/gameSlice";
+import userReducer from "@/features/user/userSlice";
 
 export const store = configureStore({
   reducer: {
-    cards: cardsReducer,
-    game: gameReducer
-  }
+    game: gameReducer,
+    user: userReducer,
+  },
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

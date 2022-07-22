@@ -1,0 +1,38 @@
+@use "../../styles/_common.scss";
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding-bottom: 10px;
+  text-align: center;
+  width: 100%;
+}
+
+.header_player {
+  font-weight: bold;
+}
+
+.card {
+  margin-left: 10px;
+  margin-right: 10px;
+  display: inline-block;
+  box-sizing: border-box;
+  border: 3px solid transparent;
+  transition: transform 150ms ease;
+  transform-origin: center;
+  cursor: "pointer";
+
+  &-selected {
+    border: 1px solid blue;
+    border-radius: #{common.$card-border-radius * 2}px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 255, 0.4);
+    transform: scale(1.1);
+  }
+
+  &-disabled {
+    opacity: 0.5;
+  }
+}

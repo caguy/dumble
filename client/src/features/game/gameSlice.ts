@@ -2,33 +2,21 @@ import {
   createEntityAdapter,
   createSlice,
   EntityId,
-  EntityState,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
-import { Card, cardsSelectors } from "../cards/cardsSlice";
-import { findRuns, findSameKind } from "./combinations";
+import { RootState } from "@/app/store";
+import { findRuns, findSameKind } from "./helpers/combinations";
+import { Card } from "./types/Card.types";
+import { Player } from "./types/Player.types";
+import { Game } from "./types/Game.types";
+import messages from "./settings/messages";
+import { choosePlayerName } from "@/features/user/userSlice";
 
-export interface Player {
-  id: string;
-  hand: EntityId[];
-  name: string;
-}
-
-export interface Game {
-  stack: EntityId[];
-  discard: EntityId[];
-  trick: EntityId[];
-  turn: EntityId | null;
-  phase: "discard" | "draw" | null;
-  firstPlayer: EntityId | null;
-  players: EntityState<Player>;
-  status: "TITLE" | "PLAYING";
-}
-
+const cardsAdapter = createEntityAdapter<Card>();
 const playersAdapter = createEntityAdapter<Player>();
 
 const initialState: Game = {
+  cards: cardsAdapter.getInitialState(),
   stack: [],
   discard: [],
   trick: [],
@@ -36,14 +24,10 @@ const initialState: Game = {
   phase: null,
   firstPlayer: null,
   players: playersAdapter.getInitialState(),
-  status: "TITLE",
+  status: "INTRO",
 };
 
-const messages = new Map<Game["phase"], string>([
-  ["discard", "choisissez vos cartes à défausser"],
-  ["draw", "prenez une carte dans la pioche ou la défausse"],
-]);
-
+// Paramétrage du store
 export const gameSlice = createSlice({
   name: "game",
   initialState,
@@ -51,11 +35,21 @@ export const gameSlice = createSlice({
     startGame: (
       state,
       action: PayloadAction<{
-        cards: EntityId[];
+        cards: Card[];
         players: Omit<Player, "hand">[];
       }>
     ) => {
-      const stack = action.payload.cards;
+      // Initialisation du jeu de cartes
+      if (state.cards.ids.length !== 0) {
+        cardsAdapter.removeAll(state.cards);
+      }
+      cardsAdapter.upsertMany(state.cards, {
+        type: "cards",
+        payload: action.payload.cards,
+      });
+
+      // Distribution des cartes
+      const stack = action.payload.cards.map((card) => card.id);
       const players = action.payload.players.map((player) => ({
         ...player,
         hand: stack.splice(0, 5),
@@ -67,13 +61,15 @@ export const gameSlice = createSlice({
         type: "cards",
         payload: players,
       });
+
+      // Initialisation du tour de jeu
       const firstPlayer = players[Math.floor(Math.random() * players.length)];
       state.turn = firstPlayer.id;
       state.firstPlayer = firstPlayer.id;
       state.phase = "discard";
       state.status = "PLAYING";
     },
-    endGame: () => initialState,
+    endGame: () => ({ ...initialState, status: "TITLE" as Game["status"] }),
     discard: (
       state,
       action: PayloadAction<{ cards: EntityId[]; player: EntityId }>
@@ -133,14 +129,26 @@ export const gameSlice = createSlice({
       state.phase = "discard";
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(choosePlayerName, (state) => {
+      state.status = "TITLE";
+    });
+  },
 });
 
+// Export des actions
 export const { startGame, endGame, discard, draw } = gameSlice.actions;
+
+// Export des selecteurs d'entités
+export const cardsSelectors = cardsAdapter.getSelectors(
+  (state: RootState) => state.game.cards
+);
 
 export const playersSelectors = playersAdapter.getSelectors(
   (state: RootState) => state.game.players
 );
 
+// Export des sélecteurs custom
 export const selectGameStatus = (state: RootState) => state.game.status;
 export const selectStack = (state: RootState) =>
   state.game.stack
@@ -190,4 +198,5 @@ export const selectIsPickable = (state: RootState, player: EntityId) =>
   state.game.phase === "draw" && state.game.turn === player;
 export const selectPhase = (state: RootState) => state.game.phase;
 
+// Export du reducer
 export default gameSlice.reducer;

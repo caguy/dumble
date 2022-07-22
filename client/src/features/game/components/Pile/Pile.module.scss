@@ -1,0 +1,13 @@
+@use "../../styles/_common.scss";
+
+.stack {
+  width: #{common.$card-width}px;
+  height: #{common.$card-height}px;
+  position: relative;
+  border-radius: 5px;
+  border: dashed 3px rgb(201, 201, 201);
+}
+
+.card {
+  position: absolute;
+}
