@@ -11,19 +11,27 @@ export default function App() {
   const renderComponent = () => {
     switch (gameStatus) {
       case "INTRO":
-        return <Intro />;
+        return (
+          <div>
+            <Intro />
+          </div>
+        );
       case "TITLE":
-        return <Title />;
+        return (
+          <div>
+            <Title />
+          </div>
+        );
       case "PLAYING":
-        return <Game />;
+        return (
+          <div className={styles.fullWidth}>
+            <Game />
+          </div>
+        );
       default:
         return <></>;
     }
   };
 
-  return (
-    <div className={styles.appWrapper}>
-      <div>{renderComponent()}</div>
-    </div>
-  );
+  return <div className={styles.appWrapper}>{renderComponent()}</div>;
 }
