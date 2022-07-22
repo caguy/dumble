@@ -3,6 +3,7 @@ import { startGame } from "../../../features/game/gameSlice";
 import { v4 as uuidv4 } from "uuid";
 import initializeCards from "@/features/game/helpers/initializeCards";
 import { selectUserName } from "@/features/user/userSlice";
+import OnlinePlayers from "@/features/user/components/OnlinePlayers";
 
 const Title = () => {
   const dispatch = useAppDispatch();
@@ -31,6 +32,9 @@ const Title = () => {
       </div>
       <div>
         <button>Partie en ligne</button>
+      </div>
+      <div>
+        <OnlinePlayers />
       </div>
     </>
   );

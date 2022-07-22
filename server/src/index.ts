@@ -1,20 +1,32 @@
-import express from "express";
 import { Server } from "socket.io";
-import http from "http";
+import { createServer } from "http";
 
 interface Player {
-  name: string;
-  socketId: string;
+  username: string;
 }
 
-const app = express();
-const server = http.createServer(app);
-const socket = new Server(server);
-
-const players: Player[] = [];
-
-socket.on("connection", (socket) => {
-  console.log("a user connected");
+const httpServer = createServer();
+const io = new Server(httpServer, {
+  cors: {
+    origin: ["http://localhost:4000"],
+  },
 });
 
-app.listen(3000, () => console.log("App listening on port 3000"));
+const players = new Map<string, Player>();
+
+io.on("connection", (socket) => {
+  socket.emit(
+    "all_online_players",
+    Array.from(players).map(([id, player]) => player)
+  );
+
+  socket.on("username_chosen", (params: { username: string }) => {
+    players.set(socket.id, { username: params.username });
+  });
+
+  socket.on("disconnect", () => {
+    players.delete(socket.id);
+  });
+});
+
+httpServer.listen(3000);
